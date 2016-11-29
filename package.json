@@ -1,0 +1,19 @@
+{
+  "name": "personal-js",
+  "version": "1.0.0",
+  "description": "Server for personal usage and codesharing purposes",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pwroff/personal-js.git"
+  },
+  "author": "Leonid Lazaryev <leonidlazaryev@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/pwroff/personal-js/issues"
+  },
+  "homepage": "https://github.com/pwroff/personal-js#readme"
+}
