@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "export NODE_ENV=development; node -e \"require('./tools/jsBundler.js').watchScripts()\"",
-    "build": "export NODE_ENV=production; node -e \"require('./tools/jsBundler.js').buildScripts()\"",
+    "watch": "node -e \"require('./tools/jsBundler.js').watchScripts()\"",
+    "build": "node -e \"require('./tools/jsBundler.js').buildScripts()\"",
     "watch:styles": "export NODE_ENV=development; node -e \"require('./tools/lessBundler.js').watchLess()\"",
     "build:styles": "export NODE_ENV=production; node -e \"require('./tools/lessBundler.js').buildLess()\"",
     "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js"
