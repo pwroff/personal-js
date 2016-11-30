@@ -1,0 +1,6 @@
+{
+  "main": "index.js",
+  "private": true,
+  "name": "user",
+  "version": "0.0.0"
+}
