@@ -10,7 +10,8 @@
     "build": "node -e \"require('./tools/jsBundler.js').buildScripts()\"",
     "watch:styles": "export NODE_ENV=development; node -e \"require('./tools/lessBundler.js').watchLess()\"",
     "build:styles": "export NODE_ENV=production; node -e \"require('./tools/lessBundler.js').buildLess()\"",
-    "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js"
+    "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js",
+    "postinstall": "npm run refresh && npm run build && npm run build:styles"
   },
   "repository": {
     "type": "git",
