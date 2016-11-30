@@ -2,6 +2,7 @@
 
 const express = require('express');
 const fs = require('fs');
+const routesPath = process.cwd()+'/src/routes/';
 
 const app = express();
 
@@ -9,35 +10,76 @@ app.use('/build', express.static('build'));
 
 app.get('/', function(req, res){
     const src = process.cwd()+'/index.html';
-    const index = src;
-    res.sendFile(index);
+    res.sendFile(src);
 });
 
-function normalizePort(val) {
-    var port = parseInt(val, 10);
+const checkedRoutes = {};
 
-    if (isNaN(port)) {
-        // named pipe
-        return val;
-    }
+const checkRoutes = (app)=>{
+    return new Promise((resolve, reject) => {
+        fs.readdir(routesPath, (err, data)=>{
 
-    if (port >= 0) {
-        // port number
-        return port;
-    }
+            if  (err) reject();
 
-    return false;
-}
+            const availableRoutes = {};
+
+            data.map((v, i)=>{
+
+                if (checkedRoutes[v]) return;
+
+                try {
+                    const curr = require(routesPath+v);
+                    availableRoutes[v] = curr;
+                    console.log(`Route /${v} loaded`);
+                } catch(e) {
+                    console.log('Unable to load route module');
+                }
+            });
+
+            for (const route of Object.keys(availableRoutes)) {
+                app.use(`/${route}`, availableRoutes[route]);
+                checkedRoutes[route] = true;
+            }
+            resolve();
+        });
+    });
+};
 
 class Server {
+
+    static normalizePort(val) {
+        var port = parseInt(val, 10);
+
+        if (isNaN(port)) {
+            // named pipe
+            return val;
+        }
+
+        if (port >= 0) {
+            // port number
+            return port;
+        }
+
+        return false;
+    }
+
     constructor(port = '3660'){
-        this.app = app;
-        this.port = normalizePort(port);
+        this._app = app;
+        this._port = Server.normalizePort(port);
     }
 
     start() {
-        this.app.listen(this.port);
-        console.log(`server Listening on port ${this.port}`);
+        checkRoutes(this._app).then(()=>{
+            this._app.listen(this._port);
+            console.log(`server Listening on port ${this._port}`);
+        }).catch((e)=>{
+            console.log(`Error while starting a server`, e);
+        });
+
+    }
+
+    refreshRoutes() {
+        return checkRoutes(this._app);
     }
 }
 
