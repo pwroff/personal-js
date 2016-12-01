@@ -1,6 +1,6 @@
 {
   "main": "index.js",
   "private": true,
-  "name": "user",
+  "name": "webaudio",
   "version": "0.0.0"
 }

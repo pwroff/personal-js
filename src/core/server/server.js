@@ -3,17 +3,71 @@
 const express = require('express');
 const fs = require('fs');
 const routesPath = process.cwd()+'/src/routes/';
+const ReactDOM = require('react-dom/server');
+const React = require('react');
+const Html = require('../../components/Html');
 
 const app = express();
 
 app.use('/build', express.static('build'));
 
 app.get('/', function(req, res){
-    const src = process.cwd()+'/index.html';
-    res.sendFile(src);
+    const data = {
+        head: [
+            {
+                element: 'link',
+                attributes: {
+                    rel: 'stylesheet',
+                    href: '/build/css/style.css'
+                }
+            }
+        ]
+    };
+    const bundle =  '/build/js/bundle.js';
+    const html = ReactDOM.renderToStaticMarkup(React.createElement(Html, {data, bundle}));
+    res.status(200);
+    res.send(`<!doctype html>${html}`);
 });
 
 const checkedRoutes = {};
+
+const checkData = (data)=>{
+    return new Promise((resolve, reject)=>{
+        const availableRoutes = {};
+        const checker = (i)=>{
+            if (i == data.length) {
+                resolve(availableRoutes);
+            } else {
+                const v = data[i];
+                if (checkedRoutes[v]) {
+                    checker(i+1);
+                }
+
+
+                try {
+                    const curr = require(routesPath+v);
+
+                    if (curr instanceof Promise) {
+                        curr().then((r)=>{
+
+                            availableRoutes[v] = r;
+                            console.log(`Async Route /${v} loaded`);
+                            checker(i+1);
+                        })
+                    } else {
+                        availableRoutes[v] = curr;
+                        console.log(`Route /${v} loaded`);
+                        checker(i+1);
+                    }
+                } catch(e) {
+                    console.log(`Unable to load ${v} route module`, e);
+                    checker(i+1);
+                }
+            }
+        };
+        checker(0);
+    });
+}
 
 const checkRoutes = (app)=>{
     return new Promise((resolve, reject) => {
@@ -21,26 +75,15 @@ const checkRoutes = (app)=>{
 
             if  (err) reject();
 
-            const availableRoutes = {};
-
-            data.map((v, i)=>{
-
-                if (checkedRoutes[v]) return;
-
-                try {
-                    const curr = require(routesPath+v);
-                    availableRoutes[v] = curr;
-                    console.log(`Route /${v} loaded`);
-                } catch(e) {
-                    console.log('Unable to load route module');
+            checkData(data).then((availableRoutes)=>{
+                for (const route of Object.keys(availableRoutes)) {
+                    app.use(`/${route}`, availableRoutes[route]);
+                    checkedRoutes[route] = true;
                 }
+
+                resolve();
             });
 
-            for (const route of Object.keys(availableRoutes)) {
-                app.use(`/${route}`, availableRoutes[route]);
-                checkedRoutes[route] = true;
-            }
-            resolve();
         });
     });
 };
