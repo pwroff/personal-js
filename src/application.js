@@ -3,11 +3,7 @@
  */
 import 'babel-polyfill';
 import React, {Component} from 'react';
-import ReactDOM from 'react-dom';
-
-const container = document.createElement('section');
-container.className = "container";
-document.body.appendChild(container);
+import renderToContainer from './helpers/renderToContainer';
 
 class HW extends Component {
     render() {
@@ -19,4 +15,4 @@ class HW extends Component {
     }
 }
 
-ReactDOM.render(<HW/>, container);
+renderToContainer(<HW/>, {class: 'whatever'});

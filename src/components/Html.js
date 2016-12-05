@@ -17,9 +17,7 @@ module.exports = class Html extends Component {
             return createElement(e.element, Object.assign({}, {key: i},e.attributes));
         }) : [];
 
-        const body = this.props.data.body? this.props.data.body.map((e, i) => {
-            return createElement(e.element, Object.assign({}, {key: i},e.attributes));
-        }):[];
+        const body = this.props.data.body? this.props.data.body :[];
 
         return createElement('html', null,
             [
@@ -31,10 +29,9 @@ module.exports = class Html extends Component {
                         ...head
                     ]
                 ),
-                createElement('body', {key: 'body'}, [
-                    ...body,
+                createElement('body', {key: 'body'},
+                    body,
                     bundle
-                    ]
                 )
             ]
         );
