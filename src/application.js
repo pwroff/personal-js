@@ -15,4 +15,4 @@ class HW extends Component {
     }
 }
 
-renderToContainer(<HW/>, {class: 'whatever'});
+renderToContainer(<HW/>, {class: 'content'});
