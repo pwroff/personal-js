@@ -1,0 +1,6 @@
+{
+  "main": "index.js",
+  "private": true,
+  "name": "svg-drawer",
+  "version": "0.0.0"
+}

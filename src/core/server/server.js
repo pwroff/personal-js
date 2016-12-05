@@ -9,7 +9,7 @@ const Html = require('../../components/Html');
 
 const app = express();
 
-const getHtml = ()=>{
+const getHtml = (bundle = '/build/js/bundle.js')=>{
     const data = {
         head: [
             {
@@ -21,8 +21,9 @@ const getHtml = ()=>{
             }
         ]
     };
-    const bundle =  '/build/js/bundle.js';
-    const links = [];
+    const links = [
+        React.createElement('a', {key: 'home', className:'playgroundLink', href: `/`}, 'home')
+    ];
 
     for (let l of Object.keys(checkedRoutes)) {
         links.push(
@@ -103,6 +104,10 @@ const checkRoutes = (app)=>{
 };
 
 class Server {
+
+    static getHtml(...all) {
+        return getHtml(...all)
+    }
 
     static normalizePort(val) {
         var port = parseInt(val, 10);
