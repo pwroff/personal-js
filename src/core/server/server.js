@@ -9,9 +9,7 @@ const Html = require('../../components/Html');
 
 const app = express();
 
-app.use('/build', express.static('build'));
-
-app.get('/', function(req, res){
+const getHtml = ()=>{
     const data = {
         head: [
             {
@@ -24,9 +22,25 @@ app.get('/', function(req, res){
         ]
     };
     const bundle =  '/build/js/bundle.js';
-    const html = ReactDOM.renderToStaticMarkup(React.createElement(Html, {data, bundle}));
+    const links = [];
+
+    for (let l of Object.keys(checkedRoutes)) {
+        links.push(
+            React.createElement('a', {key: l, className:'playgroundLink', href: `/${l}`}, l)
+        )
+    }
+
+    data.body = React.createElement('nav', {}, links);
+
+    return ReactDOM.renderToStaticMarkup(React.createElement(Html, {data, bundle}));
+};
+
+app.use('/build', express.static('build'));
+
+app.get('/', function(req, res){
+
     res.status(200);
-    res.send(`<!doctype html>${html}`);
+    res.send(`<!doctype html>${getHtml()}`);
 });
 
 const checkedRoutes = {};
