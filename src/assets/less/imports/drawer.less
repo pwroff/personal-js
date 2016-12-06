@@ -21,6 +21,7 @@
     top: 0;
     left: 0;
     border-bottom: .1rem solid @borderR;
+    .transform(translate3d(0,0,0));
 
     input {
       outline: none;
@@ -30,11 +31,28 @@
       height: @cPanelH - 2rem;
       margin-top: 1rem;
       margin-right: 2rem;
-      font-size: 1.7rem;
-      max-width: 10rem;
+      font-size: 1.4rem;
+      max-width: 6rem;
+      font-weight: 300;
       &[type=text], &[type=number] {
         padding-left: 1rem;
         width: auto;
+      }
+
+      &[type=button] {
+        background-color: transparent;
+        font-weight: 400;
+        color: @linkC;
+        border-color: @linkC;
+        cursor: pointer;
+        text-transform: capitalize;
+        .transform-origin(center);
+        .transform(scale(.7));
+        .transition-transform(@transition);
+
+        &:hover, &.active {
+          .transform(scale(1));
+        }
       }
     }
   }
