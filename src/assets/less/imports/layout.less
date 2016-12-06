@@ -12,7 +12,9 @@ html, body {
 body {
   font-size: 1.4rem;
   font-family: Helvetica, "Helvetica Neue", Arial, sans-serif;
-  padding: 2rem;
+  padding: @navHeight 2rem;
+  color: @fontDefColor;
+  background-color: @bgColor;
 
   &, * {
     box-sizing: border-box;
@@ -20,5 +22,36 @@ body {
     -moz-user-select: none;
     -webkit-user-select: none;
     -ms-user-select: none;
+  }
+}
+
+.content{
+  height: 100%;
+  width: 100%;
+}
+
+nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: @navHeight;
+  z-index: 2;
+  text-align: left;
+  line-height: @navHeight;
+  font-size: 1.6rem;
+  padding: 0;
+  overflow: hidden;
+  background-color: @bgColor;
+  border-bottom: .1rem solid @linkC;
+
+  > a {
+    display: inline-block;
+    padding: 0 1rem;
+    border-right: .1rem solid @linkC;
+
+    &:last-child {
+      border-right: none;
+    }
   }
 }

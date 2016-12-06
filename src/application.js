@@ -9,10 +9,10 @@ class HW extends Component {
     render() {
         return (
             <h1>
-                Hello from React
+                Hello from Leonid
             </h1>
         )
     }
 }
 
-renderToContainer(<HW/>, {class: 'content'});
+renderToContainer(<HW/>);
