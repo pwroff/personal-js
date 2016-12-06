@@ -4,11 +4,12 @@
 import 'babel-polyfill';
 import React, {Component} from 'react';
 import renderToContainer from '../../helpers/renderToContainer';
+import Drawer from '../../decorators/Drawer';
 
 class Container extends Component {
 
     render() {
-        return <div id="container"></div>
+        return <Drawer/>
     }
 }
 

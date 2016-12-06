@@ -8,9 +8,12 @@ a {
   font-style: normal;
   color: @linkC;
   text-decoration: none;
+  opacity: .7;
+  .transition(opacity @transition);
 
   &:hover {
     font-style: normal;
     text-decoration: none;
+    opacity: 1;
   }
 }

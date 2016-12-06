@@ -1,0 +1,41 @@
+.drawer {
+  @cPanelH: 5rem;
+  margin: 0;
+  height: 100%;
+  display: block;
+  width: 100%;
+  position: relative;
+  padding: @cPanelH 0 0;
+
+  svg {
+    margin: auto;
+    width: 100%;
+    border: .1rem solid @borders;
+    border-radius: @borderR;
+  }
+
+  .control-panel {
+    height: @cPanelH;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    border-bottom: .1rem solid @borderR;
+
+    input {
+      outline: none;
+      border: .1rem solid @borders;
+      border-radius: @borderR;
+      box-shadow: none;
+      height: @cPanelH - 2rem;
+      margin-top: 1rem;
+      margin-right: 2rem;
+      font-size: 1.7rem;
+      max-width: 10rem;
+      &[type=text], &[type=number] {
+        padding-left: 1rem;
+        width: auto;
+      }
+    }
+  }
+}

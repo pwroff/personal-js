@@ -1,0 +1,85 @@
+.clearfix {
+  &:before, &:after {
+    display: block;
+    clear: both;
+    content: '';
+  }
+}
+
+.transition(...) {
+  -webkit-transition: @arguments;
+  -moz-transition: @arguments;
+  -o-transition: @arguments;
+  -ms-transition: @arguments;
+  transition: @arguments;
+}
+
+.transition-transform(@timing) {
+  -webkit-transition: -webkit-transform @timing;
+  -moz-transition: -moz-transform @timing;
+  -o-transition: -o-transform @timing;
+  -ms-transition: -ms-transform @timing;
+  transition: transform @timing;
+}
+
+.transition-transform-multiple(@timing, @rest...) {
+  -webkit-transition: -webkit-transform @timing, @rest;
+  -moz-transition: -moz-transform @timing, @rest;
+  -o-transition: -o-transform @timing, @rest;
+  -ms-transition: -ms-transform @timing, @rest;
+  transition: transform @timing, @rest;
+}
+
+.transform(...) {
+  -webkit-transform: @arguments;
+  -moz-transform: @arguments;
+  -ms-transform: @arguments;
+  -o-transform: @arguments;
+  transform: @arguments;
+}
+
+.transform-origin(...) {
+  -webkit-transform-origin: @arguments;
+  -moz-transform-origin: @arguments;
+  -ms-transform-origin: @arguments;
+  -o-transform-origin: @arguments;
+  transform-origin: @arguments;
+}
+
+.old-devices-vh(@vh) {
+  @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:portrait){
+    height: 1024px;
+  }
+  @media all and (device-width: 768px) and (device-height: 1024px) and (orientation:landscape){
+    height: 768px;
+  }
+  @media screen and (device-aspect-ratio: 40/71) {
+    height: 568px;
+  }
+}
+
+.animation(@an) {
+  -webkit-animation: @an;
+  animation: @an;
+  -moz-animation: @an;
+  -o-animation: @an;
+}
+
+.inherited-border {
+  border-top-color: inherit;
+  border-bottom-color: inherit;
+  border-left-color: inherit;
+  border-right-color: inherit;
+}
+
+.user-select(@pr) {
+  -webkit-user-select: @pr;
+  -moz-user-select: @pr;
+  user-select: @pr;
+
+  * {
+    -webkit-user-select: @pr;
+    -moz-user-select: @pr;
+    user-select: @pr;
+  }
+}

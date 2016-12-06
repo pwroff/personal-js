@@ -6,12 +6,13 @@
   "scripts": {
     "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "node -e \"require('./tools/jsBundler.js').watchScripts()\"",
-    "build": "node -e \"require('./tools/jsBundler.js').buildScripts()\"",
+    "build": "npm run build:js && npm run build:styles",
+    "watch:js": "node -e \"require('./tools/jsBundler.js').watchScripts()\"",
+    "build:js": "node -e \"require('./tools/jsBundler.js').buildScripts()\"",
     "watch:styles": "node -e \"require('./tools/lessBundler.js').watchLess()\"",
     "build:styles": "node -e \"require('./tools/lessBundler.js').buildLess()\"",
     "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js",
-    "postinstall": "npm run refresh && npm run build && npm run build:styles"
+    "postinstall": "npm run refresh && npm run build"
   },
   "repository": {
     "type": "git",
