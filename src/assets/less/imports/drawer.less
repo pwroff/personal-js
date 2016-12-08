@@ -1,11 +1,33 @@
 .drawer {
-  @cPanelH: 5rem;
+  @cPanelH: 10rem;
   margin: 0;
   height: 100%;
   display: block;
   width: 100%;
   position: relative;
   padding: @cPanelH 0 0;
+
+  .draw {
+    cursor: crosshair;
+  }
+
+  .move {
+    cursor: default;
+
+    svg {
+      .transform(translate3d(0,0,0));
+
+      > * {
+        cursor: move;
+        opacity: .5;
+        .transition(opacity @transition);
+
+        &:hover {
+          opacity: 1;
+        }
+      }
+    }
+  }
 
   svg {
     margin: auto;
@@ -20,15 +42,26 @@
     position: absolute;
     top: 0;
     left: 0;
-    border-bottom: .1rem solid @borderR;
+    border-bottom: .1rem solid @borders;
     .transform(translate3d(0,0,0));
+
+    .panel-row {
+      height: @cPanelH / 2;
+      border-bottom: .1rem solid @borders;
+      width: 90%;
+      margin: 0 auto;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
 
     input {
       outline: none;
       border: .1rem solid @borders;
       border-radius: @borderR;
       box-shadow: none;
-      height: @cPanelH - 2rem;
+      height: @cPanelH / 2 - 2rem;
       margin-top: 1rem;
       margin-right: 2rem;
       font-size: 1.4rem;
@@ -46,13 +79,16 @@
         border-color: @linkC;
         cursor: pointer;
         text-transform: capitalize;
-        .transform-origin(center);
-        .transform(scale(.7));
-        .transition-transform(@transition);
+      }
+    }
 
-        &:hover, &.active {
-          .transform(scale(1));
-        }
+    .action-button, .toolButton {
+      .transform-origin(center);
+      .transform(scale(.7));
+      .transition-transform(@transition);
+
+      &:hover, &.active {
+        .transform(scale(1));
       }
     }
   }
