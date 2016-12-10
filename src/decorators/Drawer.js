@@ -2,6 +2,7 @@
  * Created by Leonid on 05/12/16.
  */
 import React,{Component} from 'react';
+import ReactDOM from 'react-dom';
 import SVGCanvas from '../components/SVGCanvas';
 
 export default class Drawer extends Component {
@@ -16,7 +17,8 @@ export default class Drawer extends Component {
             fill: 'rgba(22,122,222,.5)',
             stroke: '#0055bb',
             strokeWidth: '1',
-            tool: 'path'
+            tool: 'path',
+            mode: 'draw'
         };
 
         this._key = 0;
@@ -43,10 +45,12 @@ export default class Drawer extends Component {
                 }
             }}>
                 {this.getPannel()}
-                <div onMouseDown={this._startDrawing.bind(this)}>
-                    <SVGCanvas width={this.state.width} height={this.state.height} onPositionChange={this._setCords.bind(this)}>
-                        {this.state.shapes}
-                    </SVGCanvas>
+                <div onMouseDown={this.state.mode == 'draw' ? this._startDrawing.bind(this) : null} className={this.state.mode}>
+                    <SVGCanvas width={this.state.width}
+                               height={this.state.height}
+                               onPositionChange={this._setCords.bind(this)}
+                               shapes={this.state.shapes}
+                    />
                 </div>
             </section>
         )
@@ -82,49 +86,115 @@ export default class Drawer extends Component {
 
     }
 
+    _shapeMouseDown(i, e){
+        const {mode, shapes} = this.state;
+
+        switch (mode) {
+            case 'move':
+                return this._handleShapeMove(i, e);
+                break;
+            default:
+                return;
+        }
+    }
+
+    _handleShapeMove(i, e) {
+        const {shapes} = this.state,
+            shape = shapes[i],
+            {props} = shape,
+            moveTarget = e.currentTarget.parentNode;
+
+        let vX = props.x || props.cx || 0;
+        let vY = props.y || props.cy|| 0;
+        let sX = e.pageX - vX, sY = e.pageY - vY;
+
+        const mousemove = (e)=>{
+            let dX = e.pageX - sX, dY = e.pageY - sY;
+
+            if (props.hasOwnProperty('x')) {
+                props.x = dX;
+                props.y = dY;
+            } else if (props.hasOwnProperty('cx')) {
+                props.cx = dX;
+                props.cy = dY;
+            } else {
+                props.transform = `translate(${dX}, ${dY})`;
+            }
+
+            shapes[i] = Object.assign({}, shape);
+
+            this.setState({shapes});
+        };
+
+        document.body.onmouseup = (e) => {
+            shapes[i] = Object.assign({}, shape);
+            this.setState({shapes});
+            moveTarget.removeEventListener('mousemove', mousemove, false);
+            document.body.onmouseup = null;
+        };
+
+        moveTarget.addEventListener('mousemove', mousemove, false);
+
+    }
+
     _updateActiveShape(start) {
         const {tool, fill, stroke, strokeWidth} = this.state;
+
+        let props = {};
 
         const defaults = {
             fill,
             stroke,
             strokeWidth,
-            key: this._key,
+            onMouseEnter: (e)=>{
+            },
+            onMouseLeave: (e)=>{
+            },
+            onMouseDown: this._shapeMouseDown.bind(this, this._key),
+            id: this._key,
             ref: this._addRef.bind(this, this._key)
         };
 
         switch(tool) {
             case 'path':
-                return React.createElement(tool, {
+                props = {
                     ...defaults,
                     d: this._dX,
                     fill: 'none'
-                });
+                };
+
+                break;
 
             case 'circle':
-                return React.createElement(tool, {
+                props = {
                     ...defaults,
                     cx: this._sX,
                     cy: this._sY
-                });
+                };
+                break;
             case 'ellipse':
-                return React.createElement(tool, {
+                props = {
                     ...defaults,
                     cx: this._sX,
                     cy: this._sY,
                     rx: Math.max(this._dX, this._dX*-1) || 0,
                     ry: Math.max(this._dY, this._dY*-1) || 0
-                });
+                };
+                break;
             case 'rect':
-                return React.createElement(tool, {
+                props = {
                     ...defaults,
                     x: this._sX,
                     y: this._sY,
                     width: Math.max(this._dX, 1) || 0,
                     height: Math.max(this._dY, 1) || 0
-                });
+                };
+                break;
+            default:
 
         }
+
+        return {shape: tool, props};
     }
 
     _updateRecord(start) {
@@ -201,6 +271,18 @@ export default class Drawer extends Component {
     }
 
     getPannel() {
+
+
+        return (
+            <div className='control-panel'>
+                {this._shapeActions()}
+                {this._toolsActions()}
+            </div>
+        )
+    }
+
+    _shapeActions() {
+
         const change = (e)=>{
             const updated = {
                 [e.target.name] : e.target.value
@@ -209,19 +291,8 @@ export default class Drawer extends Component {
             this.setState(updated);
         };
 
-        const btns = this._availableTools.map((t, i)=>{
-            return <input type='button'
-                          key={t}
-                          className={t == this.state.tool ? 'active toolButton' : 'toolButton default'}
-                          value={t}
-                          onClick={()=>{
-                              this.setState({tool: t})
-                          }}
-            />
-        });
-
         return (
-            <div className='control-panel'>
+            <div className='panel-row'>
                 <input
                     onChange={change}
                     type='text'
@@ -255,7 +326,34 @@ export default class Drawer extends Component {
                            this._refs = [];
                            this.setState({shapes: []})
                        }}
-                       />
+                />
+                <input type='button'
+                       value={'ChangeMode'}
+                       onClick={()=>{
+                           let mode = this.state.mode == 'draw' ? 'move' : 'draw';
+
+                           if (mode != this.state.mode) {
+                               this.setState({mode});
+                           }
+                       }}
+                />
+            </div>
+        )
+    }
+
+    _toolsActions(){
+        const btns = this._availableTools.map((t, i)=>{
+            return <input type='button'
+                          key={t}
+                          className={t == this.state.tool ? 'active toolButton' : 'toolButton default'}
+                          value={t}
+                          onClick={()=>{
+                              this.setState({tool: t})
+                          }}
+            />
+        });
+        return (
+            <div className='panel-row action-row'>
                 {btns}
             </div>
         )
