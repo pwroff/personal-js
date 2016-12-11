@@ -15,7 +15,8 @@ export default class Cipher extends Component {
         this.state = {
             game: g,
             log: false,
-            hiddenRows: {}
+            hiddenRows: {},
+            gameRuns: false
         };
 
         g.onupdate = ()=>{
@@ -38,40 +39,63 @@ export default class Cipher extends Component {
 
         const g = this.state.game;
 
-        const grid = this._getGrid();
+
+        const inner = this._renderInner();
 
         return (
             <section className='page'>
 
                 <h3>Cipher Game Page</h3>
                 <hr />
-                <input type="button" value="RESTART" onClick={()=>{
-                    const g = new Game();
 
-                    g.onupdate = ()=>{
-                        this.forceUpdate();
-                    };
-
-                    this.setState({game: g});
-                }}/>
-
-                <input type="button" value="TOGGLE LOG" onClick={()=>{
-                    this.setState({log: !this.state.log});
-                }}/>
-                <input type="button" value="ADD NUMBERS" onClick={()=>{
-                    this.state.game.addNumbers();
-                }}/>
-                <hr />
-                <h4>Game Board</h4>
-
-
-                <div className='cipher-board'>{grid}</div>
+                {inner}
                 <pre style={{display: this.state.log ? 'block': 'none'}}>
                     <code>
                         {JSON.stringify(g.board.cells, null, 2)}
                     </code>
                 </pre>
             </section>
+        )
+    }
+
+    _renderInner() {
+
+        if (!this.state.gameRuns){
+            return (
+                <div>
+                    <input type="button" value="START THE GAME" onClick={()=>{
+                        this.setState({gameRuns:true})
+                    }}/>
+                </div>
+            )
+        }
+
+        const grid = this._getGrid();
+        return(
+            <div className='game-overlay'>
+
+                <div className='game-panel'>
+                    <input type="button" value="RESTART" onClick={()=>{
+                        const g = new Game();
+
+                        g.onupdate = ()=>{
+                            this.forceUpdate();
+                        };
+
+                        this.setState({game: g});
+                    }}/>
+                    <input type="button" value="ADD NUMBERS" onClick={()=>{
+                        this.state.game.addNumbers();
+                    }}/>
+                    <input type="button" value="CLOSE THE GAME" onClick={()=>{
+                        this.setState({gameRuns:false})
+                    }}/>
+                </div>
+                <div className='cipher-board'>
+                    {grid}
+                </div>
+
+            </div>
         )
     }
 
