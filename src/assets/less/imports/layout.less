@@ -4,6 +4,8 @@ html {
 
 html, body {
   height: 100%;
+  box-sizing: border-box;
+  min-height: 100vh;
   width: 100%;
   padding: 0;
   margin: 0;
@@ -54,4 +56,20 @@ nav {
       border-right: none;
     }
   }
+}
+
+.page {
+  margin: 0;
+  height: 100%;
+  display: block;
+  width: 100%;
+  position: relative;
+}
+
+pre {
+  display: block;
+  clear: both;
+  padding: 3rem;
+  background-color: @borders;
+
 }

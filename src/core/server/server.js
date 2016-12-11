@@ -13,6 +13,13 @@ const getHtml = (bundle = '/build/js/bundle.js')=>{
     const data = {
         head: [
             {
+                element: 'meta',
+                attributes: {
+                    name: 'viewport',
+                    content: 'width=device-width, initial-scale=1, user-scalable=no'
+                }
+            },
+            {
                 element: 'link',
                 attributes: {
                     rel: 'stylesheet',
