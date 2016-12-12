@@ -18,6 +18,7 @@ export default class GameBoard {
         this._lastI = 1;
         this._lastY = 1;
         this._lastX = 1;
+        this._hiddenRows = {};
         this.onchange = ()=>{};
         this.onrowdone = (c)=>{};
 
@@ -293,7 +294,8 @@ export default class GameBoard {
             }
         });
         if (all == this._columnsC) {
-            this.onrowdone(y);
+            this._hiddenRows[y] = true;
+            this.onrowdone(this._hiddenRows);
         }
     }
 
