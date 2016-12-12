@@ -23,13 +23,9 @@ export default class Cipher extends Component {
             this.forceUpdate();
         };
 
-        g.onrow = (r) => {
-            const {hiddenRows} = this.state;
-
-            hiddenRows[r] = true;
-
+        g.onrow = (hiddenRows) => {
             this.setState({hiddenRows});
-        }
+        };
 
     }
 
@@ -81,8 +77,11 @@ export default class Cipher extends Component {
                         g.onupdate = ()=>{
                             this.forceUpdate();
                         };
+                        g.onrow = (hiddenRows) => {
+                            this.setState({hiddenRows});
+                        };
 
-                        this.setState({game: g});
+                        this.setState({game: g, hiddenRows: {}});
                     }}/>
                     <input type="button" value="ADD NUMBERS" onClick={()=>{
                         this.state.game.addNumbers();
