@@ -12,9 +12,11 @@ export default class SVGCanvas extends Component {
     };
 
     render() {
-        const {width, height} = this.props;
+        const {width, height, selectedShape} = this.props;
         const sh = this.props.shapes.map((el, i)=>{
-            return React.createElement(el.shape, {...el.props, key: el.props.id});
+            let className = el.props.className || '' + ` shape`;
+            className += selectedShape == el.props.id ? ' selected' : '';
+            return React.createElement(el.shape, {...el.props, key: el.props.id, className});
         });
         return(
             <svg width={width} height={height} viewBox={`0 0 ${width} ${height}`} onMouseMove={this._onMove.bind(this)}>

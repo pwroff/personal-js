@@ -18,7 +18,8 @@ export default class Drawer extends Component {
             stroke: '#0055bb',
             strokeWidth: '1',
             tool: 'path',
-            mode: 'draw'
+            mode: 'draw',
+            selectedShape: null
         };
 
         this._key = 0;
@@ -50,6 +51,7 @@ export default class Drawer extends Component {
                                height={this.state.height}
                                onPositionChange={this._setCords.bind(this)}
                                shapes={this.state.shapes}
+                               selectedShape={this.state.selectedShape}
                     />
                 </div>
             </section>
@@ -88,9 +90,11 @@ export default class Drawer extends Component {
 
     _shapeMouseDown(i, e){
         const {mode, shapes} = this.state;
-
+        this.setState({
+            selectedShape: i
+        });
         switch (mode) {
-            case 'move':
+            case 'edit':
                 return this._handleShapeMove(i, e);
                 break;
             default:
@@ -291,6 +295,8 @@ export default class Drawer extends Component {
             this.setState(updated);
         };
 
+        let mode = this.state.mode == 'draw' ? 'edit' : 'draw';
+
         return (
             <div className='panel-row'>
                 <input
@@ -327,13 +333,12 @@ export default class Drawer extends Component {
                            this.setState({shapes: []})
                        }}
                 />
+                <span>Change Mode To </span>
                 <input type='button'
-                       value={'ChangeMode'}
+                       value={mode}
                        onClick={()=>{
-                           let mode = this.state.mode == 'draw' ? 'move' : 'draw';
-
                            if (mode != this.state.mode) {
-                               this.setState({mode});
+                               this._switchMode(mode);
                            }
                        }}
                 />
@@ -357,5 +362,13 @@ export default class Drawer extends Component {
                 {btns}
             </div>
         )
+    }
+
+    _switchMode(mode) {
+        let selectedShape = null;
+        if (mode == 'edit'){
+            selectedShape = this.state.shapes.length-1;
+        }
+        this.setState({mode, selectedShape});
     }
 }
