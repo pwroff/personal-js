@@ -11,18 +11,18 @@
     cursor: crosshair;
   }
 
-  .move {
+  .edit {
     cursor: default;
 
     svg {
       .transform(translate3d(0,0,0));
 
-      > * {
+      .shape {
         cursor: move;
         opacity: .5;
         .transition(opacity @transition);
 
-        &:hover {
+        &.selected {
           opacity: 1;
         }
       }
