@@ -7,7 +7,7 @@
   width: 100%;
   height: 100%;
   z-index: 3;
-  background-color: #fff;
+  background-color: @bgColor;
   .game-panel {
     position: absolute;
     width: 100%;
@@ -47,7 +47,7 @@
       border-radius: .2rem;
       text-align: center;
       cursor: pointer;
-      background-color: #ffffff;
+      background-color: @bgColor;
       color: @linkC;
       font-size: 2rem;
       font-weight: 300;
@@ -55,7 +55,7 @@
       .transition(@ts);
 
       &.ACTIVE, &:hover {
-        color: #fff;
+        color: @bgColor;
         background-color: rgba(0, 80, 79, 0.36);
         .transition(@ts);
       }
