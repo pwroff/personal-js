@@ -30,19 +30,21 @@
   }
 
   svg {
-    margin: auto;
+    margin: @padDEf auto;
     width: 100%;
     border: .1rem solid @borders;
     border-radius: @borderR;
+    background-color: #fff;
   }
 
   .control-panel {
     height: @cPanelH;
-    width: 100%;
     position: absolute;
     top: 0;
-    left: 0;
+    left: -@padDEf;
+    right: -@padDEf;
     border-bottom: .1rem solid @borders;
+    background-color: @panelsColor;
     .transform(translate3d(0,0,0));
 
     .panel-row {
