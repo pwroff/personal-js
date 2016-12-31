@@ -1,122 +1,424 @@
-/**
- * Created by Leonid on 30/11/16.
- */
 var THREE = require('three');
-
-var scene, camera, renderer;
-var geometry, material, mesh;
-var floorMesh;
-
-export default class Canvas{
-
-    constructor(){
-        scene = new THREE.Scene();
-
-        camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 1, 10000 );
-        camera.position.z = 1000;
-
-        scene.add(camera);
-
-        geometry = new THREE.BoxGeometry( 200, 200, 100 );
-        material = new THREE.MeshStandardMaterial( {
-            color: 0xff0000
-        });
-        mesh = new THREE.Mesh( geometry, material );
-        mesh.position.x = -300;
-        mesh.position.y = -300;
-        scene.add( mesh );
+var container, controls;
+var camera, object, scene, renderer;
+var mesh, geometry, material, mouse = new THREE.Vector2();
+var worldWidth = 128, worldDepth = 128;
 
 
-        var bulbGeometry = new THREE.SphereGeometry( 100, 100, 100 );
-        var bulbLight = new THREE.PointLight( 0xffee88, 100, 100, 200 );
-        var bulbMat = new THREE.MeshStandardMaterial( {
-            color: 0xff0000
-        });
-        bulbLight.add( new THREE.Mesh( bulbGeometry, bulbMat ) );
-        bulbLight.position.set( 0, 2, 0 );
-        bulbLight.castShadow = true;
-        scene.add( bulbLight );
+let start = 0,
+    max = 500;
+var clock = new THREE.Clock();
+init();
+animate();
+function init() {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
+    camera.position.y = 600;
+    camera.position.z = 2200;
+    scene = new THREE.Scene();
+    scene.fog = new THREE.Fog( 0x000000, 3000, 10000 );
+    geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
+    geometry.rotateX( - Math.PI / 2 );
+    // var texture = new THREE.TextureLoader().load( "/assets/GrassGreenTexture0001.jpg" );
+    // texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+    // texture.repeat.set( 100, 100 );
+    material = new THREE.MeshLambertMaterial( { wireframe: true, color: 0x00aaff } );
+    mesh = new THREE.Mesh( geometry, material );
+    mesh.castShadow = false;
+    mesh.receiveShadow = true;
+    scene.add( mesh );
 
-        renderer = new THREE.WebGLRenderer();
-        renderer.setSize( window.innerWidth, window.innerHeight );
-        renderer.setClearColor(0x000000, 1);
+    controls = new FirstPersonControls( camera );
+    controls.lookSpeed = 0.0125;
+    controls.movementSpeed = 500;
+    controls.noFly = false;
+    controls.lookVertical = true;
+    controls.constrainVertical = true;
+    controls.verticalMin = 1.5;
+    controls.verticalMax = 2.0;
+    controls.lon = 250;
+    controls.lat = 30;
 
-        var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
-        scene.add( light );
+    var light = new THREE.DirectionalLight( 0xefefff, 1.5 );
+    light.position.set( 1, 1, 1 ).normalize();
+    light.castShadow = true;
+    scene.add( light );
+    var light = new THREE.DirectionalLight( 0xffefef, 1.5 );
+    light.position.set( -1, -1, -1 ).normalize();
+    scene.add( light );
 
-        var floorMat = new THREE.MeshStandardMaterial( {
-            roughness: 0.8,
-            color: 0xcccccc,
-            metalness: 0.7,
-            bumpScale: 0.0005
-        });
+    object = new THREE.Group();
 
-        var floorGeometry = new THREE.PlaneBufferGeometry( 1000, 1000 );
-        floorMesh = new THREE.Mesh( floorGeometry, floorMat );
-        floorMesh.receiveShadow = true;
-        floorMesh.position.y = -400;
-        floorMesh.rotation.y = 0.04;
-        scene.add( floorMesh );
+    scene.add(object);
 
+    renderer = new THREE.WebGLRenderer();
+    renderer.setClearColor( 0x0000000 );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    container.innerHTML = "";
+    container.appendChild( renderer.domElement );
+    //
+    window.addEventListener( 'resize', onWindowResize, false );
 
-        var spotLight = new THREE.SpotLight( 0xffffff );
-        spotLight.position.set( 100, 1000, 100 );
-
-        spotLight.castShadow = true;
-
-        spotLight.shadow.mapSize.width = 1024;
-        spotLight.shadow.mapSize.height = 1024;
-
-        spotLight.shadow.camera.near = 500;
-        spotLight.shadow.camera.far = 4000;
-        spotLight.shadow.camera.fov = 30;
-
-        scene.add( spotLight );
-
-        this.scene = scene;
-        this.camera = camera;
-        this.renderer = renderer;
+    document.addEventListener( 'mousemove', (event)=>{
+        mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+        mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+    }, false );
+}
+function onWindowResize() {
+    camera.aspect = window.innerWidth / window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize( window.innerWidth, window.innerHeight );
+}
+//
+function animate() {
+    requestAnimationFrame( animate );
+    render();
+}
+function render() {
+    var delta = clock.getDelta(),
+        time = clock.getElapsedTime() * 10;
+    if (start < max) {
+        addGeometry();
     }
 
-    append(to = document.body) {
-        to.style.margin = 0;
-        to.style.padding = 0;
-        to.style.overflow = 'hidden';
-        to.appendChild( renderer.domElement );
-        this.draw();
-        this._addListeners();
+    controls.update( delta );
+
+    renderer.render( scene, camera );
+}
+
+function addGeometry() {
+    let color = new THREE.Color(`hsl(${Math.floor(360*Math.random())}, 90%, 40%)`).getHex();
+    var mat = new THREE.MeshLambertMaterial({transparent: true, opacity: 0.95, color});
+    var geo = new THREE.SphereGeometry( 25, 32, 32 );
+    geo.rotateX( - Math.PI / (Math.random()) );
+    geo.rotateY( - Math.PI / (Math.random()) );
+    var me = new THREE.Mesh(geo, mat);
+    me.castShadow = true;
+    let z = start%2 == 0 ?  -300 * Math.random() - 10 : 300 * Math.random() - 10;
+    me.position.z = z;
+    me.position.y = 1000 * Math.random() + 50;
+    let x = start%2 == 0 ? -1000*Math.random() : 1000*Math.random();
+    me.position.x = x;
+    object.add(me);
+    start += 1;
+    var vy = Math.random() * 10;
+    var vx = (x / 1000) * 10;
+    var vz = (z/1000) * 10;
+    var gravity = .5;
+    var bounce_factor = 0.8;
+    me.onBeforeRender = ()=>{
+        let newV = me.position.y - vy;
+
+        me.position.y = newV <=25 ? 25 : newV;
+        me.position.x += vx;
+        me.position.z += vz;
+
+        if (me.position.y <= 25) {
+            vy = -(vy*bounce_factor);
+            vx = vx*bounce_factor;
+            vz = vz*bounce_factor;
+        }
+
+
+        vy+=gravity;
+    }
+}
+
+function FirstPersonControls( object, domElement ) {
+
+    this.object = object;
+    this.target = new THREE.Vector3( 0, 0, 0 );
+
+    this.domElement = ( domElement !== undefined ) ? domElement : document;
+
+    this.enabled = true;
+
+    this.movementSpeed = 1.0;
+    this.lookSpeed = 0.005;
+
+    this.lookVertical = true;
+    this.autoForward = false;
+
+    this.activeLook = true;
+
+    this.heightSpeed = false;
+    this.heightCoef = 1.0;
+    this.heightMin = 0.0;
+    this.heightMax = 1.0;
+
+    this.constrainVertical = false;
+    this.verticalMin = 0;
+    this.verticalMax = Math.PI;
+
+    this.autoSpeedFactor = 0.0;
+
+    this.mouseX = 0;
+    this.mouseY = 0;
+
+    this.lat = 0;
+    this.lon = 0;
+    this.phi = 0;
+    this.theta = 0;
+
+    this.moveForward = false;
+    this.moveBackward = false;
+    this.moveLeft = false;
+    this.moveRight = false;
+
+    this.mouseDragOn = false;
+
+    this.viewHalfX = 0;
+    this.viewHalfY = 0;
+
+    if ( this.domElement !== document ) {
+
+        this.domElement.setAttribute( 'tabindex', - 1 );
+
     }
 
-    draw() {
-        function animate() {
+    //
 
-            requestAnimationFrame( animate );
+    this.handleResize = function () {
 
-            renderer.render( scene, camera );
+        if ( this.domElement === document ) {
+
+            this.viewHalfX = window.innerWidth / 2;
+            this.viewHalfY = window.innerHeight / 2;
+
+        } else {
+
+            this.viewHalfX = this.domElement.offsetWidth / 2;
+            this.viewHalfY = this.domElement.offsetHeight / 2;
 
         }
 
-        animate();
-    }
+    };
 
-    _addListeners() {
-        document.body.onkeydown = (e)=>{
-            switch (e.code) {
-                case 'ArrowUp':
-                    floorMesh.rotateY(1);
-                    break;
-                case 'ArrowDown':
-                    floorMesh.rotateY(-1);
-                    break;
+    this.onMouseDown = function ( event ) {
 
-                case 'ArrowRight':
-                    floorMesh.rotateX(1);
-                    break;
-                case 'ArrowLeft':
-                    floorMesh.rotateX(-1);
-                    break;
+        if ( this.domElement !== document ) {
+
+            this.domElement.focus();
+
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if ( this.activeLook ) {
+
+            switch ( event.button ) {
+
+                case 0: this.moveForward = true; break;
+                case 2: this.moveBackward = true; break;
 
             }
+
         }
+
+        this.mouseDragOn = true;
+
+    };
+
+    this.onMouseUp = function ( event ) {
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        if ( this.activeLook ) {
+
+            switch ( event.button ) {
+
+                case 0: this.moveForward = false; break;
+                case 2: this.moveBackward = false; break;
+
+            }
+
+        }
+
+        this.mouseDragOn = false;
+
+    };
+
+    this.onMouseMove = function ( event ) {
+
+        if ( this.domElement === document ) {
+
+            this.mouseX = event.pageX - this.viewHalfX;
+            this.mouseY = event.pageY - this.viewHalfY;
+
+        } else {
+
+            this.mouseX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
+            this.mouseY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
+
+        }
+
+    };
+
+    this.onKeyDown = function ( event ) {
+
+        //event.preventDefault();
+
+        switch ( event.keyCode ) {
+
+            case 38: /*up*/
+            case 87: /*W*/ this.moveForward = true; break;
+
+            case 37: /*left*/
+            case 65: /*A*/ this.moveLeft = true; break;
+
+            case 40: /*down*/
+            case 83: /*S*/ this.moveBackward = true; break;
+
+            case 39: /*right*/
+            case 68: /*D*/ this.moveRight = true; break;
+
+            case 82: /*R*/ this.moveUp = true; break;
+            case 70: /*F*/ this.moveDown = true; break;
+
+        }
+
+    };
+
+    this.onKeyUp = function ( event ) {
+
+        switch ( event.keyCode ) {
+
+            case 38: /*up*/
+            case 87: /*W*/ this.moveForward = false; break;
+
+            case 37: /*left*/
+            case 65: /*A*/ this.moveLeft = false; break;
+
+            case 40: /*down*/
+            case 83: /*S*/ this.moveBackward = false; break;
+
+            case 39: /*right*/
+            case 68: /*D*/ this.moveRight = false; break;
+
+            case 82: /*R*/ this.moveUp = false; break;
+            case 70: /*F*/ this.moveDown = false; break;
+
+        }
+
+    };
+
+    this.update = function( delta ) {
+
+        if ( this.enabled === false ) return;
+
+        if ( this.heightSpeed ) {
+
+            var y = THREE.Math.clamp( this.object.position.y, this.heightMin, this.heightMax );
+            var heightDelta = y - this.heightMin;
+
+            this.autoSpeedFactor = delta * ( heightDelta * this.heightCoef );
+
+        } else {
+
+            this.autoSpeedFactor = 0.0;
+
+        }
+
+        var actualMoveSpeed = delta * this.movementSpeed;
+
+        if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+        if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
+
+        if ( this.moveLeft ) this.object.translateX( - actualMoveSpeed );
+        if ( this.moveRight ) this.object.translateX( actualMoveSpeed );
+
+        if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
+        if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
+
+        var actualLookSpeed = delta * this.lookSpeed;
+
+        if ( ! this.activeLook ) {
+
+            actualLookSpeed = 0;
+
+        }
+
+        var verticalLookRatio = 1;
+
+        if ( this.constrainVertical ) {
+
+            verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+
+        }
+
+        this.lon += this.mouseX * actualLookSpeed;
+        if ( this.lookVertical ) this.lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+
+        this.lat = Math.max( - 85, Math.min( 85, this.lat ) );
+        this.phi = THREE.Math.degToRad( 90 - this.lat );
+
+        this.theta = THREE.Math.degToRad( this.lon );
+
+        if ( this.constrainVertical ) {
+
+            this.phi = THREE.Math.mapLinear( this.phi, 0, Math.PI, this.verticalMin, this.verticalMax );
+
+        }
+
+        var targetPosition = this.target,
+            position = this.object.position;
+
+        targetPosition.x = position.x + 100 * Math.sin( this.phi ) * Math.cos( this.theta );
+        targetPosition.y = position.y + 100 * Math.cos( this.phi );
+        targetPosition.z = position.z + 100 * Math.sin( this.phi ) * Math.sin( this.theta );
+
+        this.object.lookAt( targetPosition );
+
+    };
+
+    function contextmenu( event ) {
+
+        event.preventDefault();
+
     }
+
+    this.dispose = function() {
+
+        this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
+        this.domElement.removeEventListener( 'mousedown', _onMouseDown, false );
+        this.domElement.removeEventListener( 'mousemove', _onMouseMove, false );
+        this.domElement.removeEventListener( 'mouseup', _onMouseUp, false );
+
+        window.removeEventListener( 'keydown', _onKeyDown, false );
+        window.removeEventListener( 'keyup', _onKeyUp, false );
+
+    };
+
+    var _onMouseMove = bind( this, this.onMouseMove );
+    var _onMouseDown = bind( this, this.onMouseDown );
+    var _onMouseUp = bind( this, this.onMouseUp );
+    var _onKeyDown = bind( this, this.onKeyDown );
+    var _onKeyUp = bind( this, this.onKeyUp );
+
+    this.domElement.addEventListener( 'contextmenu', contextmenu, false );
+    this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
+    this.domElement.addEventListener( 'mousedown', _onMouseDown, false );
+    this.domElement.addEventListener( 'mouseup', _onMouseUp, false );
+
+    window.addEventListener( 'keydown', _onKeyDown, false );
+    window.addEventListener( 'keyup', _onKeyUp, false );
+
+    function bind( scope, fn ) {
+
+        return function () {
+
+            fn.apply( scope, arguments );
+
+        };
+
+    }
+
+    this.handleResize();
+
 };
+
+export default this;
