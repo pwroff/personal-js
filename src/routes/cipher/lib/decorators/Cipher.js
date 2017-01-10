@@ -91,6 +91,7 @@ export default class Cipher extends Component {
                     }}/>
                 </div>
                 <div className='cipher-board'>
+                    <h4>Combine 2 numbers that are: <br/> a) The Same<br/>b) 10 in sum</h4>
                     {grid}
                 </div>
 

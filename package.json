@@ -11,7 +11,8 @@
     "build:js": "node -e \"require('./tools/jsBundler.js').buildScripts()\"",
     "watch:styles": "node -e \"require('./tools/lessBundler.js').watchLess()\"",
     "build:styles": "node -e \"require('./tools/lessBundler.js').buildLess()\"",
-    "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js",
+    "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js && npm run copy-public",
+    "copy-public": "cp -rf ./src/assets/public ./build/public",
     "postinstall": "npm run refresh && npm run build"
   },
   "repository": {

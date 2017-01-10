@@ -40,6 +40,10 @@ const getHtml = (bundle = '/build/js/bundle.js')=>{
 
     data.body = React.createElement('nav', {}, links);
 
+    let footer = React.createElement('footer', {}, 'Copyright (c) 2016 Leonid Lazaryev [leonidlazaryev@gmail.com]');
+
+    data.body = React.createElement('div', {}, data.body, footer);
+
     return ReactDOM.renderToStaticMarkup(React.createElement(Html, {data, bundle}));
 };
 
