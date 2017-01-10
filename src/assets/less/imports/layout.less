@@ -21,12 +21,14 @@ body {
   background-color: @bgColor;
   text-rendering: geometricPrecision;
 
-  &, * {
+  &, *{
     box-sizing: border-box;
     user-select: none;
-    -moz-user-select: none;
-    -webkit-user-select: none;
-    -ms-user-select: none;
+    &:not(input) {
+      -moz-user-select: none;
+      -webkit-user-select: none;
+      -ms-user-select: none;
+    }
   }
 }
 
@@ -75,4 +77,16 @@ pre {
   padding: 3rem;
   background-color: @borders;
 
+}
+
+footer {
+  position: fixed;
+  bottom: 0;
+  height: auto;
+  min-height: 5rem;
+  line-height: 5rem;
+  padding: 0 2rem;
+  left: 0;
+  right: 0;
+  background-color: @panelsColor;
 }

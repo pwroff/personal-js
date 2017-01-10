@@ -5,7 +5,7 @@
   display: block;
   width: 100%;
   position: relative;
-  padding: @cPanelH 0 0;
+  padding: @cPanelH*1.2 0 0;
 
   .draw {
     cursor: crosshair;
@@ -38,7 +38,7 @@
   }
 
   .control-panel {
-    height: @cPanelH;
+    min-height: @cPanelH;
     position: absolute;
     top: 0;
     left: -@padDEf;
@@ -48,7 +48,7 @@
     .transform(translate3d(0,0,0));
 
     .panel-row {
-      height: @cPanelH / 2;
+      min-height: @cPanelH / 2;
       border-bottom: .1rem solid @borders;
       width: 90%;
       margin: 0 auto;
@@ -67,7 +67,7 @@
       margin-top: 1rem;
       margin-right: 2rem;
       font-size: 1.4rem;
-      max-width: 6rem;
+      max-width: 10rem;
       font-weight: 300;
       &[type=text], &[type=number] {
         padding-left: 1rem;
