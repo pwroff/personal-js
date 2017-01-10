@@ -1,4 +1,7 @@
 # personal-js
+# Hello and welcome to Leonid's playground
+## This is the place of all unfinished, unrealised projects and/or educational materials
+
 # License
 The MIT License (MIT)
 
