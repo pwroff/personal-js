@@ -9,11 +9,17 @@ import draw from './src/draw';
 class Container extends Component {
 
     componentDidMount(){
-        draw();
+        draw(0, 0, this.refs.container);
     }
 
     render() {
-        return <div id="container"></div>
+        return (
+            <div ref='container'>
+                <audio controls autoPlay="true" id="audioP">
+                    <source src="./build/public/Was_It_Me.mp3" type="audio/mpeg"/>
+                </audio>
+            </div>
+        )
     }
 }
 

@@ -15,7 +15,7 @@ var Dot = function Dot(ctx, x, y, velX, velY) {
     this.invX = velX;
     this.invY = velY;
     this.gravity = 1;
-    this.color = `rgba(120,120,120, ${getRandom(0.5, 1.1)})`;
+    this.color = `rgba(0,0,0, ${getRandom(0.5, 1.1)})`;
     this.height = 3;
     this.width = 2;
     this.multiplier = 1;
@@ -40,7 +40,7 @@ var Dot = function Dot(ctx, x, y, velX, velY) {
 
         self.invX = self.vX;
         self.invY = self.vY;
-    };
+    }
 
     document.body.addEventListener('keydown', keydownHandler, false);
 
@@ -51,7 +51,7 @@ var Dot = function Dot(ctx, x, y, velX, velY) {
     this.setSpeedMultiplier = (multiplier) => {
         this.multiplier = multiplier;
     }
-};
+}
 
 Dot.prototype.fly = function (width, height) {
     this.prevX = this.pX;
@@ -59,10 +59,10 @@ Dot.prototype.fly = function (width, height) {
     this.ctx.beginPath();
     this.ctx.arc(this.pX-Math.PI, this.pY-Math.PI, this.height, 0, Math.PI * 2, true);
     this.ctx.closePath();
-    this.ctx.fillStyle = 'rgba(0,0,0,0.9)';
+    this.ctx.fillStyle = 'rgba(0,0,0,0.8)';
     this.ctx.fill();
-    this.ctx.fillStyle = 'rgba(0,0,0,0.9)';
-    this.ctx.fillRect(this.pX-Math.PI, this.pY-Math.PI , Math.PI * 2, Math.PI * 2);
+    // this.ctx.fillStyle = 'rgba(0,0,0,0.9)';
+    // this.ctx.fillRect(this.pX-Math.PI, this.pY-Math.PI , Math.PI * 2, Math.PI * 2);
     this.pX += (this.vX*this.multiplier);
     this.pY += (this.vY*this.multiplier);
 
