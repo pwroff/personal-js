@@ -90,8 +90,8 @@ export default class Cipher extends Component {
                         this.setState({gameRuns:false})
                     }}/>
                 </div>
-                <h5>Combine 2 numbers that are: <br/> a) The Same<br/>b) 10 in sum</h5>
                 <div className='cipher-board'>
+                    <h4>Combine 2 numbers that are: <br/> a) The Same<br/>b) 10 in sum</h4>
                     {grid}
                 </div>
 

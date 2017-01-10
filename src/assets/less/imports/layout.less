@@ -50,7 +50,7 @@ nav {
   padding: 0;
   overflow: hidden;
   background-color: @panelsColor;
-  border-bottom: .1rem solid @linkC;
+  box-shadow: 0 15px 50px -22px rgba(0, 0, 0, .5);
 
   > a {
     display: inline-block;
@@ -89,4 +89,22 @@ footer {
   left: 0;
   right: 0;
   background-color: @panelsColor;
+}
+
+button, input[type=button] {
+  padding: 1rem 1.3rem;
+  border: 1px solid @actionC;
+  color: @fontDefColor;
+  font-weight: 300;
+  outline: none;
+  background-color: @actionC;
+  opacity: 1;
+  border-radius: .3rem;
+  cursor: pointer;
+  .transition(opacity 400ms);
+  margin: 0 1rem;
+
+  &:hover {
+    opacity: .7;
+  }
 }
