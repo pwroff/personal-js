@@ -3,3 +3,5 @@
  */
 import 'babel-polyfill';
 import Canvas from './lib/components/Canvas';
+
+Canvas();
