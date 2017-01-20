@@ -11,7 +11,7 @@ var active;
 var store = [];
 
 let start = 0,
-    max = 50;
+    max = 25;
 var clock = new THREE.Clock();
 
 function init() {
@@ -19,13 +19,13 @@ function init() {
     container = document.createElement('div');
     document.body.appendChild(container);
     camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 );
-    camera.position.y = 400;
-    camera.position.z = 1500;
+    camera.position.y = 300;
+    camera.position.z = 1200;
     scene = new THREE.Scene();
-    scene.fog = new THREE.Fog( 0x000000, 3000, 10000 );
+    scene.fog = new THREE.Fog( 0xffffff, 3000, 10000 );
     geometry = new THREE.PlaneGeometry( 20000, 20000, worldWidth - 1, worldDepth - 1 );
     geometry.rotateX( - Math.PI / 2 );
-    material = new THREE.MeshLambertMaterial( { wireframe: true, color: 0x00aaff } );
+    material = new THREE.MeshLambertMaterial( { wireframe: true, color: 0xaaaaaa } );
     mesh = new THREE.Mesh( geometry, material );
     mesh.castShadow = false;
     mesh.receiveShadow = true;
@@ -34,9 +34,7 @@ function init() {
     light.position.set( 1, 1, 1 );
     light.castShadow = true;
     scene.add( light );
-    var light = new THREE.DirectionalLight( 0xffffff, 3 );
-    light.position.set( -1, 0, -1 );
-    light.castShadow = true;
+    var light = new THREE.HemisphereLight( 0xffffbb, 0x080820, 1 );
     scene.add( light );
 
     object = new THREE.Group();
@@ -44,7 +42,7 @@ function init() {
     scene.add(object);
 
     renderer = new THREE.WebGLRenderer();
-    renderer.setClearColor( 0x0000000 );
+    renderer.setClearColor( 0xeeeeee );
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setSize( window.innerWidth, window.innerHeight );
     container.innerHTML = "";
@@ -77,7 +75,7 @@ function render() {
 function addGeometry() {
     let color = new THREE.Color(`hsl(${Math.floor(360*Math.random())}, 90%, 40%)`).getHex();
     var mat = new THREE.PointsMaterial({color});
-    var geo = new THREE.SphereGeometry( 25, 50,50 );
+    var geo = new THREE.SphereGeometry( 15, 50,50 );
     geo.rotateX( - Math.PI / (Math.random()) );
     geo.rotateY( - Math.PI / (Math.random()) );
     var me = new THREE.Points( geo, mat);
@@ -100,11 +98,11 @@ function addGeometry() {
         }
         let newV = me.position.y - vy;
 
-        me.position.y = newV <=25 ? 25 : newV;
+        me.position.y = newV <=15 ? 15 : newV;
         me.position.x += vx;
         me.position.z += vz;
 
-        if (me.position.y <= 25) {
+        if (me.position.y <= 15) {
             vy = -(vy*bounce_factor);
             vx = vx*bounce_factor;
             vz = vz*bounce_factor;
@@ -123,7 +121,7 @@ function addGeometry() {
         me.isDeleting = true;
 
         let st = Date.now();
-        let change = 0.0055;
+        let change = 0.01;
         let duration = 600;
 
         me.onBeforeRender = ()=>{
@@ -131,7 +129,8 @@ function addGeometry() {
             let step = Date.now() - st;
 
             let verts = me.geometry.vertices;
-            let val = change*(duration/step);
+            let c = duration/step;
+            let val = change*(c);
 
             verts.map((p, i) => {
                 p.x += p.x*val;
