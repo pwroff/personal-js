@@ -6,10 +6,29 @@ const routesPath = process.cwd()+'/src/routes/';
 const ReactDOM = require('react-dom/server');
 const React = require('react');
 const Html = require('../../components/Html');
+const bodyParser = require('body-parser');
 
 const app = express();
 
-const getHtml = (bundle = '/build/js/bundle.js')=>{
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+const {graphqlExpress, graphiqlExpress} = require('graphql-server-express');
+const schema = require('../graph/schema');
+
+app.use('/graphql', graphqlExpress({schema}));
+app.use('/graphiql', graphiqlExpress({
+    endpointURL: '/graphql',
+    query: `{
+    answers
+  }
+  `,
+}));
+
+process.on('unhandledRejection', function(e) {
+    console.log(e.message, e.stack)
+});
+
+const getHtml = (bundle = '/build/js/bundle.js', withNav = true)=>{
     const data = {
         head: [
             {
@@ -38,7 +57,7 @@ const getHtml = (bundle = '/build/js/bundle.js')=>{
         )
     }
 
-    data.body = React.createElement('nav', {}, links);
+    data.body = withNav && React.createElement('nav', {}, links) || null;
 
     let footer = React.createElement('footer', {}, 'Copyright (c) 2016 Leonid Lazaryev [leonidlazaryev@gmail.com]');
 

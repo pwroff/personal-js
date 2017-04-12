@@ -13,10 +13,9 @@ router.use(function timeLog(req, res, next) {
 // define the home page route
 router.get('/', function(req, res) {
     const bundle =  '/build/js/cipher_bundle.js';
-    const html = getHtml(bundle);
+    const html = getHtml(bundle, false);
     res.status(200);
     res.send(`<!doctype html>${html}`);
 });
-
 
 module.exports = router;

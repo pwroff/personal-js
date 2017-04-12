@@ -4,7 +4,7 @@
   "description": "Server for personal usage and codesharing purposes",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
+    "start": "node --harmony index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "npm run build:js && npm run build:styles",
     "watch:js": "node -e \"require('./tools/jsBundler.js').watchScripts()\"",
@@ -13,7 +13,8 @@
     "build:styles": "node -e \"require('./tools/lessBundler.js').buildLess()\"",
     "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js && npm run copy-public",
     "copy-public": "cp -rf ./src/assets/public ./build/public",
-    "postinstall": "npm run refresh && npm run build"
+    "postinstall": "npm run refresh && npm run build",
+    "devel": "./node_modules/.bin/nodemon --harmony index.js"
   },
   "repository": {
     "type": "git",
@@ -25,6 +26,9 @@
     "url": "https://github.com/pwroff/personal-js/issues"
   },
   "homepage": "https://github.com/pwroff/personal-js#readme",
+  "devDependencies": {
+    "nodemon": "^1.11.0"
+  },
   "dependencies": {
     "babel": "^6.5.2",
     "babel-plugin-transform-object-assign": "^6.8.0",
@@ -33,11 +37,16 @@
     "babel-preset-react": "^6.16.0",
     "babel-preset-stage-0": "^6.16.0",
     "babelify": "^7.3.0",
+    "body-parser": "^1.17.1",
     "browserify": "^13.1.1",
     "envify": "^4.0.0",
     "express": "^4.14.0",
+    "graphql": "^0.9.3",
+    "graphql-server-express": "^0.7.0",
+    "graphql-tools": "^0.11.0",
     "less": "^2.7.1",
     "react": "^15.4.1",
+    "react-apollo": "^1.0.1",
     "react-dom": "^15.4.1",
     "reactify": "^1.1.1",
     "three": "^0.82.1",
