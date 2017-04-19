@@ -4,37 +4,63 @@
 
 import React, {Component} from 'react';
 import { gql, graphql } from 'react-apollo';
+import SubmitToken from './SubmitToken';
+import QuestionsForm from './QuestionsForm';
 
-class Cipher extends Component {
+export default class QuestionPage extends Component{
 
-    constructor(props) {
-        super(props);
+    constructor(...args) {
+        super(...args);
+
+        const st = {
+                isValid: false,
+                message: 'Log in'
+            };
+
+        this.state = st;
     }
+
 
     render() {
-        if (this.props.loading) {
-            return <h4>Loading...</h4>
-        }
-        console.log(this.props.data);
         return (
-            <div className='cipher-form'>
-                <form>
-                    <div className='input-line'>
-                        <input type='text' placeholder='something'/>
-                    </div>
-                </form>
-            </div>
+            <section className='cipher-main-layout'>
+                <div className='ci-container'>
+                    <h3>{this.state.message}</h3>
+                    <div>{this.renderInner()}</div>
+                </div>
+            </section>
         )
     }
-}
 
-const CipherWithData = graphql(gql`
-    query Answers {
-        answers {
-            answer
-            createdAt
-            token
+    renderInner() {
+        if (this.state.isValid) {
+            return this.renderForm();
         }
+
+        return this.renderTForm();
     }
-`)(Cipher);
-export default CipherWithData;
+
+    renderForm() {
+        if (this.state.isAnswered) {
+            return null;
+        }
+
+        return <QuestionsForm token={this.state.token} onSuccess={(data)=>{
+            this.setState(data);
+        }}/>
+    }
+
+    renderTForm() {
+        return (
+            <SubmitToken onTokenSended={this._onToken.bind(this)} />
+        )
+    }
+
+    _onToken(data, token) {
+        const received = {
+            ...data,
+            token
+        };
+        this.setState(received);
+    }
+};

@@ -3,8 +3,9 @@
  */
 const { makeExecutableSchema } = require('graphql-tools');
 const {init, read, write} = require('./db');
-init().then((tkns) => {
+init(10).then((tkns) => {
     global.tokens = tkns;
+    console.log(tokens);
     if (global.ontokens) {
         ontokens(tokens);
     }
@@ -14,9 +15,15 @@ type Answer {
   answer: String
   token: String
   createdAt: Float
+  state: Apptype
+}
+type Apptype {
+  isValid: Boolean
+  isAnswered: Boolean
+  message: String
 }
 type Query {
-  answers: [Answer]
+  answers: String
 }
 
 type Mutation {
@@ -24,6 +31,7 @@ type Mutation {
     token: String!,
     answer: String!
   ): Answer
+  submitToken(token: String!): Apptype
 }
 schema {
   query: Query
@@ -35,33 +43,59 @@ const rootResolvers = {
     Query: {
         answers: async(root, args, context) => {
             const raw = await read('./answers.json');
-            const {data} = JSON.parse(raw);
-            return data.map((a) => {
-                const {token, answer: an} = a;
 
-                return {
-                    token,
-                    answer: JSON.stringify(an, null, 4)
-                }
-            });
+            console.log(context.request.headers);
+
+            return {
+                answers: raw
+            }
         },
     },
     Mutation: {
+        submitToken: async (_, {token}, ctx) => {
+            const raw = await read('./answers.json');
+            const data = JSON.parse(raw);
+            const isValid = global.tokens.indexOf(token) > -1;
+
+            if (!isValid) {
+                return {
+                    isValid,
+                    isAnswered: false,
+                    message: 'Sign in with your access token.'
+                }
+            }
+
+            let isAnswered = !!data[token];
+            let message = 'Please answer questions';
+
+            if (isAnswered) {
+                message = 'Thank you for your answers!';
+            }
+
+            return {
+                isValid,
+                isAnswered,
+                message
+            }
+        },
         submitAnswers: async(root, { token, answer }, context) => {
             const raw = await read('./answers.json');
-            const {data} = JSON.parse(raw);
+            const data = JSON.parse(raw);
             const an = JSON.parse(answer);
-            data.push({
+            data[token] = {
                 token,
                 answer: an,
                 createdAt: Date.now()
-            });
-            await write('./answers.json', JSON.stringify({
-                data
-            }, null, 4));
+            };
+            await write('./answers.json', JSON.stringify(data, null, 4));
             return {
                 token,
-                answer
+                answer,
+                state: {
+                    isAnswered: true,
+                    message: 'Thank you for your answers!',
+                    isValid: true
+                }
             };
         }
     }

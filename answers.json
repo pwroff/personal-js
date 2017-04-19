@@ -1,3 +1,30 @@
 {
-    "data": []
+    "37563c4a5fd0d743": {
+        "token": "37563c4a5fd0d743",
+        "answer": {
+            "similarity": {
+                "answer": "",
+                "fullAnswer": "Chess"
+            },
+            "difficulty": {
+                "answer": 5,
+                "fullAnswer": "Reaa"
+            }
+        },
+        "createdAt": 1492638245095
+    },
+    "fc3abf7b3c55aeec": {
+        "token": "fc3abf7b3c55aeec",
+        "answer": {
+            "similarity": {
+                "answer": "",
+                "fullAnswer": "Chess"
+            },
+            "difficulty": {
+                "answer": 5,
+                "fullAnswer": "Ufff"
+            }
+        },
+        "createdAt": 1492638542585
+    }
 }

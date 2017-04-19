@@ -24,11 +24,12 @@ body {
   &, *{
     box-sizing: border-box;
     user-select: none;
-    &:not(input) {
-      -moz-user-select: none;
-      -webkit-user-select: none;
-      -ms-user-select: none;
-    }
+  }
+
+  input {
+    -moz-user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
   }
 }
 

@@ -15,13 +15,23 @@ app.use(bodyParser.json());
 const {graphqlExpress, graphiqlExpress} = require('graphql-server-express');
 const schema = require('../graph/schema');
 
-app.use('/graphql', graphqlExpress({schema}));
-app.use('/graphiql', graphiqlExpress({
-    endpointURL: '/graphql',
-    query: `{
+app.use('/graphql', graphqlExpress((req) => {
+    return {
+        schema, context: {
+            request: req
+        }
+    }
+}));
+app.use('/graphiql', graphiqlExpress((req) => {
+    return {
+        endpointURL: '/graphql', context: {
+            request: req
+        },
+        query: `{
     answers
   }
   `,
+    }
 }));
 
 process.on('unhandledRejection', function(e) {
