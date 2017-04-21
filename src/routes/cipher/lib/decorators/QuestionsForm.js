@@ -58,7 +58,7 @@ class QuestionsForm extends Component {
                     ranged: false,
                     placeholder: 'Enter similar game'
                 },
-                difficulty: {
+                rulesDifficulty: {
                     ranswer: 3,
                     answer: '',
                     label: 'How difficult?',
@@ -67,6 +67,17 @@ class QuestionsForm extends Component {
                     placeholder: 'Specify',
                     roptions: [
                         1,2,3,4,5
+                    ]
+                },
+                overallDifficulty: {
+                    specify: true,
+                    answer: '',
+                    label: 'Describe overall Difficulty',
+                    ranged: true,
+                    placeholder: 'Overall difficulty',
+                    ranswer: 'normal',
+                    roptions: [
+                        'easy', 'normal', 'hard'
                     ]
                 }
             }

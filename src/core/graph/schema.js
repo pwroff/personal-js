@@ -41,62 +41,77 @@ schema {
 
 const rootResolvers = {
     Query: {
-        answers: async(root, args, context) => {
-            const raw = await read('./answers.json');
+        answers: (root, args, context) => {
+            return new Promise((resolve, reject) => {
+                read('./answers.json').then((raw) => {
+                    console.log(context.request.headers);
 
-            console.log(context.request.headers);
+                    return resolve({
+                        answers: raw
+                    });
+                })
 
-            return {
-                answers: raw
-            }
+            })
+
+
         },
     },
     Mutation: {
-        submitToken: async (_, {token}, ctx) => {
-            const raw = await read('./answers.json');
-            const data = JSON.parse(raw);
-            const isValid = global.tokens.indexOf(token) > -1;
+        submitToken: (_, {token}, ctx) => {
+            return new Promise((resolve, reject) => {
+                read('./answers.json').then((raw) => {
+                    const data = JSON.parse(raw);
+                    const isValid = global.tokens.indexOf(token) > -1;
 
-            if (!isValid) {
-                return {
-                    isValid,
-                    isAnswered: false,
-                    message: 'Sign in with your access token.'
-                }
-            }
+                    if (!isValid) {
+                        return resolve({
+                            isValid,
+                            isAnswered: false,
+                            message: 'Sign in with your access token.'
+                        });
+                    }
 
-            let isAnswered = !!data[token];
-            let message = 'Please answer questions';
+                    let isAnswered = !!data[token];
+                    let message = 'Please answer questions';
 
-            if (isAnswered) {
-                message = 'Thank you for your answers!';
-            }
+                    if (isAnswered) {
+                        message = 'Thank you for your answers!';
+                    }
 
-            return {
-                isValid,
-                isAnswered,
-                message
-            }
+                    return resolve({
+                        isValid,
+                        isAnswered,
+                        message
+                    });
+                })
+
+            })
+
         },
-        submitAnswers: async(root, { token, answer }, context) => {
-            const raw = await read('./answers.json');
-            const data = JSON.parse(raw);
-            const an = JSON.parse(answer);
-            data[token] = {
-                token,
-                answer: an,
-                createdAt: Date.now()
-            };
-            await write('./answers.json', JSON.stringify(data, null, 4));
-            return {
-                token,
-                answer,
-                state: {
-                    isAnswered: true,
-                    message: 'Thank you for your answers!',
-                    isValid: true
-                }
-            };
+        submitAnswers: (root, { token, answer }, context) => {
+            return new Promise((resolve, reject) => {
+                read('./answers.json').then((raw) => {
+                    const data = JSON.parse(raw);
+                    const an = JSON.parse(answer);
+                    data[token] = {
+                        token,
+                        answer: an,
+                        createdAt: Date.now()
+                    };
+                    write('./answers.json', JSON.stringify(data, null, 4)).then(()=>{
+                        return resolve({
+                            token,
+                            answer,
+                            state: {
+                                isAnswered: true,
+                                message: 'Thank you for your answers!',
+                                isValid: true
+                            }
+                        });
+                    });
+
+                })
+            });
         }
     }
 };
