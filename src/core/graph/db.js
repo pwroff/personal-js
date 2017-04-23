@@ -28,6 +28,7 @@ module.exports.init = (ts = 15) => {
         write('./tokens.json', JSON.stringify({
             data: tokens
         }, null, 4)).then(()=>{
+            console.log('Initialised tokens', tokens);
             resolve(tokens);
         });
     });
