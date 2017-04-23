@@ -8,7 +8,7 @@ import { gql, graphql } from 'react-apollo';
 class NewEntry extends Component {
 
     componentDidMount() {
-        const st = localStorage.getItem('cipher-question-session');
+        const st = sessionStorage.getItem('cipher-question-session');
 
         if (st) {
             this._sendToken(st);
@@ -40,7 +40,7 @@ class NewEntry extends Component {
         this.props.mutate({
             variables: { token }
         }).then(({ data }) => {
-                localStorage.setItem('cipher-question-session', token);
+                sessionStorage.setItem('cipher-question-session', token);
                 this.props.onTokenSended(data.submitToken, token);
             }).catch((error) => {
             console.log('there was an error sending the query', error);
@@ -54,6 +54,7 @@ const SubmitToken = graphql(gql`
             isValid
             isAnswered
             message
+            showAnswers
         }
     }
 `)(NewEntry);

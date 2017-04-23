@@ -4,6 +4,12 @@
 const Server = require('./src/core/server');
 const s = new Server(process.env.PORT);
 const jsBundler = require('./tools/jsBundler');
+const tkns = require('./tokens.json');
+global.tokens = tkns.data;
+console.log(tokens);
+if (global.ontokens) {
+    ontokens(tokens);
+}
 s.start();
 
 const watch = process.argv.indexOf('--w');

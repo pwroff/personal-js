@@ -13,7 +13,8 @@
     "build:styles": "node -e \"require('./tools/lessBundler.js').buildLess()\"",
     "refresh": "rm -rf build/ && mkdir build/ && mkdir build/css && mkdir build/js && npm run copy-public",
     "copy-public": "cp -rf ./src/assets/public ./build/public",
-    "postinstall": "npm run refresh && npm run build",
+    "init-tokens": "node -e \"require('./src/core/graph/db.js').init()\"",
+    "postinstall": "npm run refresh && npm run build && npm run init-tokens",
     "devel": "./node_modules/.bin/nodemon --harmony index.js"
   },
   "repository": {

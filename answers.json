@@ -1,30 +1,68 @@
 {
-    "37563c4a5fd0d743": {
-        "token": "37563c4a5fd0d743",
+    "94e832bfd03d0a16": {
+        "token": "94e832bfd03d0a16",
         "answer": {
-            "similarity": {
-                "answer": "",
-                "fullAnswer": "Chess"
+            "rulesDifficulty": {
+                "answer": "Ok",
+                "fullAnswer": ""
             },
-            "difficulty": {
-                "answer": 5,
-                "fullAnswer": "Reaa"
+            "overallDifficulty": {
+                "answer": "Ok",
+                "fullAnswer": ""
+            },
+            "undoMove": {
+                "answer": "Yes",
+                "fullAnswer": ""
+            },
+            "roundsPlayed": {
+                "answer": "Other",
+                "fullAnswer": "Hug gfcffcc"
+            },
+            "similarity": {
+                "answer": "Yes",
+                "fullAnswer": "Nhvcrgvbnj"
+            },
+            "interest": {
+                "answer": "Indifferent",
+                "fullAnswer": ""
             }
         },
-        "createdAt": 1492638245095
+        "createdAt": 1492854187751
     },
-    "fc3abf7b3c55aeec": {
-        "token": "fc3abf7b3c55aeec",
+    "22173e07": {
+        "token": "22173e07",
         "answer": {
-            "similarity": {
-                "answer": "",
-                "fullAnswer": "Chess"
+            "rulesDifficulty": {
+                "answer": "Easy",
+                "specificAnswer": "",
+                "question": "How hard was it to understand the rules?"
             },
-            "difficulty": {
-                "answer": 5,
-                "fullAnswer": "Ufff"
+            "overallDifficulty": {
+                "answer": "Hard",
+                "specificAnswer": "",
+                "question": "How hard was the overall gaming experience?"
+            },
+            "undoMove": {
+                "answer": "Don't know",
+                "specificAnswer": "",
+                "question": "During the game did you feel like you wanted to undo your last move?"
+            },
+            "roundsPlayed": {
+                "answer": "Other",
+                "specificAnswer": "A lot",
+                "question": "How many rounds did you play?"
+            },
+            "similarity": {
+                "answer": "Don't know",
+                "specificAnswer": "",
+                "question": "Did the game remind you of any other game?"
+            },
+            "interest": {
+                "answer": "Interested",
+                "specificAnswer": "",
+                "question": "How interested were you in the game?"
             }
         },
-        "createdAt": 1492638542585
+        "createdAt": 1492856842442
     }
 }

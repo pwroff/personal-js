@@ -22,7 +22,7 @@ module.exports.init = (ts = 15) => {
     return new Promise((resolve, reject) => {
         const tokens = [];
         for (let i = 0; i < ts; i++) {
-            const bt = crypto.randomBytes(8);
+            const bt = crypto.randomBytes(4);
             tokens.push(bt.toString('hex'));
         }
         write('./tokens.json', JSON.stringify({

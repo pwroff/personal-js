@@ -51,33 +51,66 @@ class QuestionsForm extends Component {
 
         this.state = {
             questions: {
-                similarity: {
-                    answer: '',
-                    label: 'Looks similar?',
-                    specify: true,
-                    ranged: false,
-                    placeholder: 'Enter similar game'
-                },
                 rulesDifficulty: {
-                    ranswer: 3,
+                    ranswer: 'Very hard',
                     answer: '',
-                    label: 'How difficult?',
+                    label: 'How hard was it to understand the rules?',
                     specify: false,
                     ranged: true,
-                    placeholder: 'Specify',
                     roptions: [
-                        1,2,3,4,5
+                        'Very hard', 'Hard', 'Ok', 'Easy', 'Very easy'
                     ]
                 },
                 overallDifficulty: {
-                    specify: true,
+                    ranswer: 'Very hard',
                     answer: '',
-                    label: 'Describe overall Difficulty',
+                    label: 'How hard was the overall gaming experience?',
+                    specify: false,
                     ranged: true,
-                    placeholder: 'Overall difficulty',
-                    ranswer: 'normal',
                     roptions: [
-                        'easy', 'normal', 'hard'
+                        'Very hard', 'Hard', 'Ok', 'Easy', 'Very easy'
+                    ]
+                },
+                undoMove: {
+                    ranswer: 'Yes',
+                    answer: '',
+                    label: 'During the game did you feel like you wanted to undo your last move?',
+                    specify: false,
+                    ranged: true,
+                    roptions: [
+                        'Yes', 'Don\'t know' , 'No'
+                    ]
+                },
+                roundsPlayed: {
+                    ranswer: '0',
+                    answer: '',
+                    label: 'How many rounds did you play?',
+                    placeholder: 'Please specify',
+                    specify: false,
+                    ranged: true,
+                    roptions: [
+                        0,1,2,3,'Other'
+                    ]
+                },
+                similarity: {
+                    ranswer: 'No',
+                    answer: '',
+                    label: 'Did the game remind you of any other game?',
+                    placeholder: 'Please specify',
+                    specify: false,
+                    ranged: true,
+                    roptions: [
+                        'No', 'Don\'t know' , 'Yes'
+                    ]
+                },
+                interest: {
+                    ranswer: 'Indifferent',
+                    answer: '',
+                    label: 'How interested were you in the game?',
+                    specify: false,
+                    ranged: true,
+                    roptions: [
+                        'Uninterested', 'Not very interested', 'Indifferent', 'Somehow interested', 'Interested'
                     ]
                 }
             }
@@ -109,7 +142,8 @@ class QuestionsForm extends Component {
 
             answerJSON[question] = {};
             answerJSON[question].answer = curr.ranswer || '';
-            answerJSON[question].fullAnswer = curr.answer;
+            answerJSON[question].specificAnswer = curr.answer;
+            answerJSON[question].question = curr.label;
         });
 
         this.props.mutate({
@@ -140,12 +174,20 @@ class QuestionsForm extends Component {
     }
 
     _rangedChanged(e) {
-        const {name, value: v} = e.target;
-        const value = parseInt(v, 10);
+        const {name, value} = e.target;
         const {questions} = Object.assign({}, this.state);
 
         questions[name].ranswer = value;
-        questions[name].specify = value === 5;
+
+        switch (name) {
+            case 'roundsPlayed':
+                questions[name].specify = value === 'Other';
+                break;
+            case 'similarity':
+                questions[name].specify = value === 'Yes';
+                break;
+            default:
+        }
         this.setState({questions});
     }
 

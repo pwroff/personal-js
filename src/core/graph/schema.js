@@ -3,14 +3,11 @@
  */
 const { makeExecutableSchema } = require('graphql-tools');
 const {init, read, write} = require('./db');
-init(10).then((tkns) => {
-    global.tokens = tkns;
-    console.log(tokens);
-    if (global.ontokens) {
-        ontokens(tokens);
-    }
-});
+const JSONScalar = require('./JSONScalar');
+
 const rootSchema = [`
+scalar JSON
+
 type Answer {
   answer: String
   token: String
@@ -21,9 +18,10 @@ type Apptype {
   isValid: Boolean
   isAnswered: Boolean
   message: String
+  showAnswers: Boolean
 }
 type Query {
-  answers: String
+  answers(token: String!): JSON
 }
 
 type Mutation {
@@ -40,17 +38,19 @@ schema {
 `];
 
 const rootResolvers = {
+    JSON: JSONScalar,
     Query: {
         answers: (root, args, context) => {
+
             return new Promise((resolve, reject) => {
-                read('./answers.json').then((raw) => {
-                    console.log(context.request.headers);
 
-                    return resolve({
-                        answers: raw
-                    });
-                })
-
+                if (tokens.indexOf(args.token) === tokens.length - 1) {
+                    return read('./answers.json').then((raw) => {
+                        const answers = JSON.parse(raw);
+                        return resolve(answers);
+                    })
+                }
+                return reject(new Error('Unauthorized access'));
             })
 
 
@@ -62,6 +62,7 @@ const rootResolvers = {
                 read('./answers.json').then((raw) => {
                     const data = JSON.parse(raw);
                     const isValid = global.tokens.indexOf(token) > -1;
+                    const showAnswers = tokens.indexOf(token) === tokens.length - 1;
 
                     if (!isValid) {
                         return resolve({
@@ -72,16 +73,17 @@ const rootResolvers = {
                     }
 
                     let isAnswered = !!data[token];
-                    let message = 'Please answer questions';
+                    let message = 'Please answer all the questions sincerely.';
 
                     if (isAnswered) {
-                        message = 'Thank you for your answers!';
+                        message = 'This piece of knowledge is very valuable. Thank you!';
                     }
 
                     return resolve({
                         isValid,
                         isAnswered,
-                        message
+                        message,
+                        showAnswers
                     });
                 })
 
@@ -104,7 +106,7 @@ const rootResolvers = {
                             answer,
                             state: {
                                 isAnswered: true,
-                                message: 'Thank you for your answers!',
+                                message: 'This piece of knowledge is very valuable. Thank you!',
                                 isValid: true
                             }
                         });

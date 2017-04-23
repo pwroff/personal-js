@@ -3,7 +3,7 @@
  */
 
 import React, {Component} from 'react';
-import { gql, graphql } from 'react-apollo';
+import Answers from './Answers';
 import SubmitToken from './SubmitToken';
 import QuestionsForm from './QuestionsForm';
 
@@ -41,6 +41,9 @@ export default class QuestionPage extends Component{
     }
 
     renderForm() {
+        if (this.state.showAnswers) {
+            return <Answers token={this.state.token}/>
+        }
         if (this.state.isAnswered) {
             return null;
         }
